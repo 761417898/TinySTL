@@ -158,3 +158,5 @@ namespace tinystl {
 	}
 }
 
+#endif
+
