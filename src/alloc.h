@@ -127,6 +127,9 @@ namespace tinystl {
 	}
 
 	void *alloc::allocate(size_t n) {
+        if (n == 0) {
+            return nullptr;
+        }
 		if (n > static_cast<size_t>(EMaxBytes::MAXBYTES)) {
 			return malloc(n);
 		}
