@@ -1,4 +1,5 @@
 #ifndef ALLOC_H
+#define ALLOC_H
 
 #include <cstdlib> //malloc
 #include <new> //std::bad_alloc

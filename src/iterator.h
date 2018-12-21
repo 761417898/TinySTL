@@ -1,4 +1,5 @@
 #ifndef ITERATOR_H
+#define ITERATOR_H
 
 #include <cstddef>
 
