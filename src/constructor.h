@@ -5,6 +5,7 @@
 
 #include "iterator.h"
 #include "__type_traits.h"
+#include <iostream>
 
 namespace tinystl {
     template<class T1, class T2>
@@ -19,26 +20,26 @@ namespace tinystl {
     }
 
     template<class ForwardIterator>
-    inline void destory(ForwardIterator first, ForwardIterator last) {
-        //iterator_traits
-        __destory(first, last, value_type(first));
+    void __destory_aux(ForwardIterator first, ForwardIterator last, __true_type) {}
+
+    template<class ForwardIterator>
+    void __destory_aux(ForwardIterator first, ForwardIterator last, __false_type) {
+        for (; first != last; ++first) {
+            destory(&*first);
+        }
     }
 
     template<class ForwardIterator, class T>
-    inline void __destory(ForwardIterator first, ForwardIterator last, T*) {
+    void __destory(ForwardIterator first, ForwardIterator last, T*) {
         //type_traits
         typedef typename __type_traits<T>::has_trivial_destructor trivial_destructor;
         __destory_aux(first, last, trivial_destructor());
     }
 
     template<class ForwardIterator>
-    inline void __destory_aux(ForwardIterator first, ForwardIterator last, __true_type) {}
-
-    template<class ForwardIterator>
-    inline void __destory_aux(ForwardIterator first, ForwardIterator last, __false_type) {
-        for (; first != last; ++first) {
-            destory(&*first);
-        }
+    void destory(ForwardIterator first, ForwardIterator last) {
+        //iterator_traits
+        __destory(first, last, value_type(first));
     }
 }
 

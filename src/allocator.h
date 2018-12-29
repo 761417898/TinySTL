@@ -3,6 +3,7 @@
 
 #include "alloc.h"
 #include "constructor.h"
+#include <iostream>
 
 namespace tinystl {
     /*
@@ -31,7 +32,7 @@ namespace tinystl {
     }
 
     template<class T>
-    T *allocator<T>::allocate(size_t n) {
+    T *allocator<T>::allocate(size_t n) { 
         return static_cast<T*>(alloc::allocate(sizeof(T) * n));
     }
 
