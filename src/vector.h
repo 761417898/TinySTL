@@ -52,7 +52,7 @@ namespace tinystl {
             return static_cast<size_type>(end() - begin());
         }
         size_type capacity() {
-            return static_cast<size_type>(end_of_storage() - begin());
+            return static_cast<size_type>(end_of_storage - begin());
         }
         bool empty() {
             return begin() == end();
@@ -164,7 +164,7 @@ namespace tinystl {
 
     template<typename T,typename Alloc>
     typename vector<T,Alloc>::iterator vector<T,Alloc>::insert (iterator position, const T& val) {
-        return vector<T, Alloc>::insert_aux(position, val);
+        vector<T, Alloc>::insert_aux(position, val);
     }
 
     template<typename T,typename Alloc>
@@ -195,7 +195,7 @@ namespace tinystl {
 		    new_finish = uninitialized_fill_n(new_finish,n,val);
 		    new_finish = uninitialized_copy(position,finish,new_finish);
 
-		    destroy(begin(),end());
+		    destory(begin(),end());
 		    deallocate();
 
 		    start = new_start;
