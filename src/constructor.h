@@ -5,7 +5,6 @@
 
 #include "iterator.h"
 #include "__type_traits.h"
-#include <iostream>
 
 namespace tinystl {
     template<class T1, class T2>

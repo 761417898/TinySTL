@@ -3,7 +3,6 @@
 
 #include "alloc.h"
 #include "constructor.h"
-#include <iostream>
 
 namespace tinystl {
     /*
