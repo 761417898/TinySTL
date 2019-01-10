@@ -261,6 +261,12 @@ namespace tinystl {
                 transfer(begin(), old, first);
             }
         }
+
+        void swap(list<T, Alloc> &new_list) {
+            link_type tmp = node;
+            node = new_list->node;
+            new_list->node = tmp;
+        }
         //STL sort参数必须是RandomAcessIterator
         //有点merge sort的意思又不是，
         void sort() {
@@ -283,7 +289,7 @@ namespace tinystl {
             } 
  
             for (int i = 1; i < fill; ++i) counter[i].merge(counter[i-1]);     //最后合并所有的counter
-            swap(counter[fill-1])
+            swap(counter[fill-1]);
         }
     };
 }

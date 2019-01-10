@@ -3,7 +3,6 @@
 
 #include <vector>
 #include <cassert>
-#include <gtest/gtest.h>
 #include "../src/vector.h"
 
 namespace tinystl {
