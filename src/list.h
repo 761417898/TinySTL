@@ -4,6 +4,7 @@
 #include "allocator.h"
 #include "constructor.h"
 #include "iterator.h"
+#include <iostream>
 
 namespace tinystl {
     template<class T>
@@ -11,7 +12,7 @@ namespace tinystl {
         __list_node<T> *prev;
         __list_node<T> *next;
         T data;
-        __list_node(const T& val = T()) : prev(nullptr), next(nullptr), data(0) {}
+        __list_node(const T& val = T()) : prev(nullptr), next(nullptr), data(val) {}
 
         bool operator==(const __list_node<T> &node) {
             return prev == node.prev && next == node.next && data == node.data;
@@ -32,44 +33,44 @@ namespace tinystl {
         typedef __list_node<T>* link_type;
         typedef __list_iterator<T> self;
 
-        link_type ptr;
+        link_type node;
         //constructor
-        __list_iterator(const link_type& p = nullptr) : ptr(p) {}
+        __list_iterator(const link_type& p = nullptr) : node(p) {}
         
         bool operator==(const __list_iterator<T> &iter) {
-            return ptr == iter.ptr;
+            return node == iter.node;
         }
         bool operator!=(const __list_iterator<T> &iter) {
-            return ptr != iter.ptr;
+            return node != iter.node;
         }
         reference operator*() {
-            return (*ptr).data;
+            return (*node).data;
         }
         pointer operator->() {
-            return &((*ptr).data);
+            return &((*node).data);
         }
         self operator++() {
-            ptr = ptr->next;
+            node = node->next;
             return *this;
         }
         self operator++(int) {
-            auto temp = ptr;
-            ptr = ptr->next;
+            auto temp = node;
+            node = node->next;
             return temp;
         }
         self operator--() {
-            ptr = ptr->prev;
+            node = node->prev;
             return *this;
         }
         self operator--(int) {
-            auto temp = ptr;
-            ptr = ptr->prev;
+            auto temp = node;
+            node = node->prev;
             return temp;
         }
     };
 
     
-    template<class T, class Alloc = allocator<T> >
+    template<class T, class Alloc = allocator<__list_node<T> > >
     class list {
     public:
         typedef T value_type;
@@ -96,7 +97,7 @@ namespace tinystl {
     public:
         //iterator
         iterator begin() {
-            return (*node)->next;
+            return (*node).next;
         }
         iterator end() {
             return node;
@@ -106,15 +107,23 @@ namespace tinystl {
             node = new_node();
             node->prev = node->next = node;
         }
-        ~list();
+        ~list(){
+            clear();
+            delete_node(node);
+        }
 
         bool empty() {
             return node->next == node;
         }
 
-        size_type size() const {
+        size_type size() {
             size_type result = 0;
-            distance(begin(), end(), result);
+            iterator i = this->begin();
+            iterator j = this->end();
+            while (i != j) {
+                ++i;
+                ++result;
+            }
             return result;
         }
 
@@ -145,7 +154,9 @@ namespace tinystl {
             tmp->next = position.node;
             tmp->prev = position.node->prev;
             (position.node->prev)->next = tmp;
-            position.nodo->prev = tmp;
+            position.node->prev = tmp;
+            //using namespace std;
+            //cout << node->data << "   " << node->data << endl;
             return tmp;
         }
         //erase
@@ -162,8 +173,8 @@ namespace tinystl {
             link_type cur = node->next;
             while (cur != node) {
                 link_type tmp = cur;
-                delete_node(tmp);
                 cur = cur->next;
+                delete_node(tmp);
             }
             node->next = node;
             node->prev = node;
@@ -173,8 +184,8 @@ namespace tinystl {
             iterator cur = begin();
             iterator last = end();
             while (cur != last) {
-                if (cur->data == val) {
-                    delete_node(cur);
+                if (cur.node->data == val) {
+                    erase(cur);
                     return;
                 }
                 ++cur;
@@ -198,6 +209,10 @@ namespace tinystl {
             }
         }
         //将first-last之间的所有元素移动到position之前
+        /*
+         * 1 2 3 4 5 6 假设first 4, last 6, position 2,第一句是把5的后指针指向2，第二句把3的后指针指向6，第三句把1的后指针指向4，第四句暂存节点1
+         * 第五句把2的前指针指向5，第六句把6的前指针指向3，第七句把4的前指针指向暂存的节点1
+         */
         void transfer(iterator position, iterator first, iterator last) {
             if (position != last) {
                 ((last.node)->prev)->next = position.node;
